@@ -36,7 +36,6 @@ box-sizing: border-box;
 	.superblock-menu, .superblock-submenu {
 		display: none;
 	}
-	
 	.admin-edit-mode .superblock-menu, .admin-edit-mode .superblock-submenu {
 		display: unset;
 		position: absolute;
@@ -51,11 +50,10 @@ box-sizing: border-box;
 		transition: opacity .5s;
 		cursor: pointer;
 	}
-	.admin-edit-mode .superblock-menu .dimension{
+	.admin-edit-mode .superblock-menu .dimension {
 		top: 2rem;
 		width: unset;
 	}
-
 	.admin-edit-mode .superblock {
 		resize: vertical;
 	}
@@ -142,7 +140,6 @@ box-sizing: border-box;
 		position: relative;
 		z-index: 1;
 	}
-
 	.img img {
 		display: block;
 		margin: auto;
@@ -254,6 +251,10 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 		let top = 0
 		let midx = 0
 		let midy = 0
+		let x25 = 0
+		let y25 = 0
+		let x75 = 0
+		let y75 = 0
 
 		switch($(this).text()) {
 			case 'aspect_ratio': 
@@ -284,7 +285,19 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 				]
 			break
 			case 'calendar_view_week':
+				height = $(this).hasClass('rot-90')? '25%' : '100%'
+				width = $(this).hasClass('rot-90')? '100%': '25%'
+				x25 = $(this).hasClass('rot-90')? 0 : '25%'
+				y25 = $(this).hasClass('rot-90')? '25%' : 0
+				x75 = $(this).hasClass('rot-90')? 0 : '50%'
+				y75 = $(this).hasClass('rot-90')? '50%' : 0
+				left = $(this).hasClass('rot-90')? 0 :'75%'
+				top = $(this).hasClass('rot-90')? '75%' : 0
 				element = [
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: 0, top: 0}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu),
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: x25, top: y25}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu),
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: x75, top: y75}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu),
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: left, top: top}).attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu)
 				]
 			break
 		}
