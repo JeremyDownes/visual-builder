@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body class='admin-edit-mode'>
+
+
+<!-- <div id="editor"></div> -->
+<button onclick="toggleDark()">lights</button>  <button onclick="toggleAdmin(this)">admin on</button> <p>https://www.befunky.com/images/prismic/5ddfea42-7377-4bef-9ac4-f3bd407d52ab_landing-photo-to-cartoon-img5.jpeg</p>
+<div class="superblock"></div>
+<div class="superblock" style="height: 600px"></div>
+<!-- <div class="superblock" style="height: unset; font-size: 19.8229px; aspect-ratio: 1903 / 600;"><div class="superblock-element" draggable="true" style="height: 62.1667%; width: 24.2249%; left: 27.6931%; top: 22.8333%;"><div class="superblock-element img" draggable="true" alt="" style="height: 53.6193%; left: 17.7874%; top: 11.2601%; width: 69.9872%;"><img src="https://www.befunky.com/images/prismic/5ddfea42-7377-4bef-9ac4-f3bd407d52ab_landing-photo-to-cartoon-img5.jpeg" style=""></div></div></div>
+<div style="height:25vh"></div> -->
+<div id="bottom"></div>
+</body>
+
+<style type="text/css">
+body { 
+	background-color: black; 
+	color: white;
+	margin: 0;
+}
+body.lightmode {
+	background-color: white; 
+	color: #4C4C4C;
+}
+
+.superblock * {
+/*border: 1px solid;*/
+box-sizing: border-box;
+}
+
+	.superblock-menu, .superblock-submenu {
+		display: none;
+	}
+	
+	.admin-edit-mode .superblock-menu, .admin-edit-mode .superblock-submenu {
+		display: unset;
+		position: absolute;
+		left: 0;
+		top: 0;
+		z-index: 0;
+		min-height: 1rem;
+		width: 100%;
+		opacity: 0;
+		overflow: visible;
+		white-space: nowrap;
+		transition: opacity .5s;
+		cursor: pointer;
+	}
+	.admin-edit-mode .superblock-menu .dimension{
+		top: 2rem;
+		width: unset;
+	}
+
+	.admin-edit-mode .superblock {
+		resize: vertical;
+	}
+	.admin-edit-mode .superblock:hover .superblock-element:hover {
+		background-color: #c4bfbf54!important;
+	}
+	.admin-edit-mode .superblock:hover .superblock-element:empty {
+		background-color: #c4bfbf80!important;
+	}
+	.admin-edit-mode .superblock:hover {
+		background-color: #c4bfbf54;
+		box-sizing: border-box;
+	}
+	.admin-edit-mode .superblock:has(>*:hover) {
+		overflow: visible;
+	}
+	.admin-edit-mode .superblock:hover .superblock-element {
+		resize: both;
+	}
+	.admin-edit-mode .superblock-element:has(>*:hover) {
+		overflow: visible;
+	}
+
+	.superblock {
+		width: 100%;
+		min-height: 1vw;
+		height: 100px;
+		position: relative;
+		overflow: auto;
+	}
+
+	.superblock .subTxt {
+		display: block;
+	}
+
+	.superblock * {
+		font-size: 1em;
+	}
+
+	.superblock-submenu input:not([type = "color"]) {
+		border: 0;
+		position: relative;
+		padding: .25rem;
+		font-size: 1rem;
+		top: -2rem
+	}
+	.superblock-submenu select {
+		padding: .25rem;
+		font-size: 1rem;
+		top: -2rem;
+	}
+	.superblock-submenu option {
+		padding: .25rem;
+	}
+	.superblock-menu:hover, .superblock-submenu:hover {
+		z-index: 1;
+		opacity: 1;
+		transition: opacity;
+	}
+	.superblock-menu .menu-button, .superblock-submenu .menu-button {
+		font-size: 1.5rem;
+		padding: .25rem;
+	}
+	.superblock-submenu>*{
+		position: relative;
+		background-color: darkgray;
+		top: -2rem;
+	}
+	.superblock-element {
+		position: absolute;
+		min-height: 1em;
+		min-width: max-content;
+		width: 2em;
+		height: 2em;
+		overflow: hidden;
+		box-sizing: border-box;
+	}
+	span.superblock-element {
+		min-width: min-content;
+		height: auto;
+	}
+	.super-text>*:not(.superblock-submenu):not(.superblock-element) {
+		margin: 0;
+		position: relative;
+		z-index: 1;
+	}
+
+	.img img {
+		display: block;
+		margin: auto;
+		width: auto;
+		height: 100%;
+	}
+
+/* helper stuff	*/
+	.rot-90 {
+		transform: rotateZ(90deg);
+	}
+	.rot-270 {
+		transform: rotateZ(270deg);
+	}
+	.bold {
+		font-weight: bold;
+	}
+	.italic {
+		font-style: italic;
+	}
+	.underline {
+		text-decoration: underline;
+	}
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+function toggleDark() {
+$('body').toggleClass('lightmode')
+}
+function toggleAdmin(el) {
+
+$('body').toggleClass('admin-edit-mode')
+$(el).text( ($('body').hasClass('admin-edit-mode')) ?
+'admin on' : 'admin off'
+)
+}
+
+	const removeSelf = function() {
+		$(this).closest('.superblock-element, .superblock').remove()
+	}
+
+	const setImageSrc = function() {
+		$(this).closest('.superblock-element').find('img:first').attr('src', $(this).val())
+	}
+	const setImageAlt = function() {
+		$(this).closest('.superblock-element').find('img:first').attr('alt', $(this).val())
+	}
+	const setLinkTarget = function() {
+		$(this).closest('.superblock-element').attr('href', $(this).val())
+	}
+
+	const setTextProperty = function() {
+		switch($(this).text()) {
+			case 'text_increase':
+				$(this).closest('.superblock-element').find('.subTxt:first').css('font-size', (parseFloat($(this).closest('.superblock-element').find('.subTxt:first').css('font-size')) / parseFloat($(this).closest('.superblock').css('font-size')  ) + .1) + 'em' )
+			break
+			case 'text_decrease':
+				$(this).closest('.superblock-element').find('.subTxt:first').css('font-size', (parseFloat($(this).closest('.superblock-element').find('.subTxt:first').css('font-size')) / parseFloat($(this).closest('.superblock').css('font-size')  ) - .1) + 'em' )
+			break
+			case 'format_align_left':
+				$(this).closest('.superblock-element').find('.subTxt:first').css('text-align', 'left')
+			break
+			case 'format_align_center':
+				$(this).closest('.superblock-element').find('.subTxt:first').css('text-align', 'center')
+			break
+			case 'format_align_right':
+				$(this).closest('.superblock-element').find('.subTxt:first').css('text-align', 'right')
+			break
+			case 'format_bold':
+				$(this).closest('.superblock-element').find('.subTxt:first').toggleClass('bold')
+			break
+			case 'format_italic':
+				$(this).closest('.superblock-element').find('.subTxt:first').toggleClass('italic')
+			break
+			case 'format_underline':
+				$(this).closest('.superblock-element').find('.subTxt:first').toggleClass('underline')
+			break
+
+			default:
+				if($(this).attr('type') === 'color') {
+					$(this).closest('.superblock-element').find('.subTxt:first').css('color', $(this).val())
+				}
+				if($(this).attr('data-option') === 'font-family') {
+					$(this).closest('.superblock-element').find('.subTxt:first').css('font-family', $(this).find(':selected').text())
+				}
+				if($(this).attr('data-option') === 'tag') {
+					let newEl = $(document.createElement($(this).find(':selected').val()))
+						.addClass($(this).closest('.superblock-element').find('.subTxt:first').attr('class'))
+						.attr('style', $(this).closest('.superblock-element').find('.subTxt:first').attr('style'))
+						.html($(this).closest('.superblock-element').find('.subTxt:first').html())
+					$(this).closest('.superblock-element').find('.subTxt:first').remove()
+					$(this).closest('.superblock-element').append(newEl)
+				}
+			break
+		}
+	}
+
+	const removeSubmenu = function() {
+		let $self = $(this)
+			$self.find('.superblock-submenu').remove()
+	}
+
+	const addElement = function() {
+		let element = null
+		let height = '5rem'
+		let width = '5rem'
+		let left = 0
+		let top = 0
+		let midx = 0
+		let midy = 0
+
+		switch($(this).text()) {
+			case 'aspect_ratio': 
+				element = $(document.createElement('div')).addClass('superblock-element').css({height: height, width: width}).attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu)
+			break
+			case 'splitscreen':
+				height = $(this).hasClass('rot-90')? '100%' : '50%'
+				width = $(this).hasClass('rot-90')? '50%' : '100%'
+				left = $(this).hasClass('rot-90')? '50%' : 0
+				top = $(this).hasClass('rot-90')? 0 : '50%'
+				element = [
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: 0, top: 0}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu),
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: left, top: top}).attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu)
+				]
+			break
+
+			case 'view_week':
+				height = $(this).hasClass('rot-90')? '33.333%' : '100%'
+				width = $(this).hasClass('rot-90')? '100%': '33.333%'
+				midx = $(this).hasClass('rot-90')? 0 : '33.333%'
+				midy = $(this).hasClass('rot-90')? '33.333%' : 0
+				left = $(this).hasClass('rot-90')? 0 :'66.66%'
+				top = $(this).hasClass('rot-90')? '66.66%' : 0
+				element = [
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: 0, top: 0}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu),
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: midx, top: midy}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu),
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: left, top: top}).attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu)
+				]
+			break
+			case 'calendar_view_week':
+				element = [
+				]
+			break
+		}
+		$(this).closest('.superblock').append(element)
+	}
+
+	const addSubElement = function() {
+		let element = null
+		switch($(this).text()) {
+			case 'aspect_ratio': 
+			  element = $(document.createElement('div')).addClass('superblock-element').attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu)
+			break
+			case 'format_color_text': 
+			  element = $(document.createElement('span')).css('width', '7em').addClass('superblock-element super-text').attr('draggable', true).on('dragstart', move)
+			  	.on('mouseenter', addTextMenu).on('mouseleave', removeSubmenu)
+			  	.append($(document.createElement('span')).addClass('subTxt').attr('contenteditable', true).text('Lorem Ipsum'))
+			break
+			case 'wallpaper': 
+			  element = $(document.createElement('div')).addClass('superblock-element img').attr('draggable', true).attr('alt', '').on('dragstart', move).on('mouseenter', addImageMenu).on('mouseleave', removeSubmenu)
+			  	.append($(document.createElement('img')).attr('src', 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM='))
+			break
+			case 'link': 
+			  element = $(document.createElement('a')).addClass('superblock-element').attr('draggable', true).on('dragstart', move).on('mouseenter', addLinkMenu).on('mouseleave', removeSubmenu).on('click', function(e) {e.stopPropagation(); e.preventDefault()})
+			break
+		}
+		$(this).closest('.superblock-element').append(element)
+	}
+
+	const size = function(e) {
+		e.stopPropagation()
+		let css = {}
+		switch($(this).text()) {
+			case 'fullscreen':
+				css = {width: '100%', height: '100%', left: 0, top: 0}
+			break
+			case 'density_large':
+				if($(this).hasClass('rot-90')) css = {width: '50%'}
+				else css = {height: '50%'}	
+			break
+			case 'density_medium':
+				if($(this).hasClass('rot-90')) css = {width: '33.333%'}
+				else css = {height: '33.333%'}	
+			break
+			case 'density_small':
+				if($(this).hasClass('rot-90')) css = {width: '25%'}
+				else css = {height: '25%'}	
+			break
+			case 'format_align_justify':
+				if($(this).hasClass('rot-90')) css = {width: '20%'}
+				else css = {height: '20%'}	
+			break
+			default:
+				if($(this).text().includes('height')) {
+					if($(this).hasClass('rot-90')) css = {width: '100%', left: 0}
+					else css = {height: '100%', top: 0}	
+				}
+			break
+		}
+		$(this).closest('.superblock-element').css(css)
+	}
+
+	const snap = function(e) {
+		e.stopPropagation()
+		let css = {}
+		let z = parseInt($(this).closest('.superblock-element').css('z-index')) || 0
+		switch($(this).text()) {
+			case 'logout':
+				css = {'z-index': z + 1}
+			break
+			case 'save_alt':
+				css = {'z-index': (z>0) ? z - 1 : 0}
+			break
+			case 'north':
+				css = {top: 0}
+			break
+			case 'south':
+				css = {top: $(this).closest('.superblock-element').parent().height() - $(this).closest('.superblock-element').height() - 2}
+			break
+			case 'east':
+				css = {left: $(this).closest('.superblock-element').parent().width() - $(this).closest('.superblock-element').width() - 2}
+			break
+			case 'west':
+				css = {left: 0}
+			break
+			case 'vertical_align_center':
+				css = $(this).hasClass('rot-90') ?
+					{left: $(this).closest('.superblock-element').parent().width() / 2 - $(this).closest('.superblock-element').width() / 2 - 1}
+					:
+					{top: $(this).closest('.superblock-element').parent().height() / 2 - $(this).closest('.superblock-element').height() / 2 - 1}
+			break
+		}
+		$(this).closest('.superblock-element').css(css)
+	}
+
+	const move = function(e) {
+		e.stopPropagation()
+		let x = e.clientX
+		let y = e.clientY
+		let left = parseInt($(this).css('left'))
+		let top = parseInt($(this).css('top'))
+		$(this).on('drag', function(e) {
+			if(!e.clientX || !e.clientY) {return}
+			$(this).css('left', left + e.clientX - x)
+			$(this).css('top', top + e.clientY - y)
+		}).on('dragend', function() { $(this).off('drag')})
+	}
+
+	const addSuperMenu = function() {
+		$(this).find('.superblock-menu').remove()
+		let menu = $(document.createElement('div')).addClass('superblock-menu')
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('space_dashboard').on('mouseenter', addSuperMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('delete_outline').on('click', removeSelf))
+		$(this).prepend(menu)
+	}
+
+	const addSuperMenuDimension = function() {
+		let menu = $(document.createElement('span')).addClass('superblock-menu dimension').on('mouseleave', function() {$(this).remove()})
+		switch($(this).text()) {
+			case 'space_dashboard':
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('aspect_ratio').on('click', addElement))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('splitscreen').on('click', addElement))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('splitscreen').on('click', addElement))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('view_week').on('click', addElement))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('view_week').on('click', addElement))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('calendar_view_week').on('click', addElement))
+			break
+		}
+		$(this).append(menu)
+	}
+
+	const addSubMenuDimension = function(e) {
+		e.stopPropagation
+		if($(this).find('.dimension').length) {return}
+		$(this).off('mouseleave').on('mouseleave', function() { $(this).find('.dimension').remove()})
+		let menu = $(document.createElement('div')).addClass('superblock-submenu dimension')
+		switch($(this).text()) {
+			case 'open_with':
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('vertical_align_center').on('click', snap))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('vertical_align_center').on('click', snap))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('north').on('click', snap))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('south').on('click', snap))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('west').on('click', snap))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('east').on('click', snap))
+			break
+			case 'zoom_out_map':
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('fullscreen').on('click', size))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('height').on('mouseenter', addSubMenuDimension).on('click', size))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('height').on('mouseenter', addSubMenuDimension).on('click', size))
+			break
+			case 'height':
+				if($(this).hasClass('rot-90')) {
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('density_large').on('click', size))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('density_medium').on('click', size))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('density_small').on('click', size))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('format_align_justify').on('click', size))
+					menu.addClass('rot-270')
+				} else {
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('density_large').on('click', size))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('density_medium').on('click', size))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('density_small').on('click', size))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_align_justify').on('click', size))
+				}
+
+			break
+			case 'wallpaper':
+				menu.append($(document.createElement('input')).attr('placeholder', 'image source (url)').val($(this).closest('.superblock-element').find('img:first').attr('src')).on('input', setImageSrc))
+			break
+			case 'format_color_text':
+				if($(this).closest('.superblock-element').hasClass('img')) {
+					menu.append($(document.createElement('input')).attr('placeholder', 'image alt text').val($(this).closest('.superblock-element').find('img:first').attr('alt')).on('input', setImageAlt))
+				}
+				if($(this).closest('.superblock-element').hasClass('super-text')) {
+					let colorVal = $(this).closest('.superblock-element').find('.subTxt:first').css('color') || 'rgb(0,0,0)'
+					colorVal =  '#' + colorVal.replace('rgb(','').replace(')','').split(',').map(function(rgb) { return Number(rgb).toString(16).trim()}).join('')
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('font_download').on('mouseenter', addSubMenuDimension))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_align_center').on('mouseenter', addSubMenuDimension))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('text_format').on('mouseenter', addSubMenuDimension))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').append(
+						$(document.createElement('input')).attr('type', 'color').css({'width': '1em', 'height': '1em', 'position': 'relative', top: '-.25em', padding: 0, margin: 0, border: 'none', 'background-color': 'transparent'}).on('input', setTextProperty)
+							.val(colorVal))
+					)
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('text_increase').on('click', setTextProperty))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('text_decrease').on('click', setTextProperty))
+				}
+			break
+			case 'font_download':
+				menu.append($(document.createElement('select')).attr('placeholder', 'Select Font')
+					.append($(document.createElement('option')).text('Arial'))
+					.append($(document.createElement('option')).text('Verdana'))
+					.append($(document.createElement('option')).text('Tahoma'))
+					.append($(document.createElement('option')).text('Trebuchet MS'))
+					.append($(document.createElement('option')).text('Times New Roman'))
+					.append($(document.createElement('option')).text('Georgia'))
+					.append($(document.createElement('option')).text('Garamond'))
+					.append($(document.createElement('option')).text('Courier New'))
+					.append($(document.createElement('option')).text('Brush Script MT'))
+				).on('change', setTextProperty).attr('data-option', 'font-family')
+			break
+			case 'format_align_center':
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_align_left').on('click', setTextProperty))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_align_center').on('click', setTextProperty))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_align_right').on('click', setTextProperty))
+			break
+			case 'text_format':
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_bold').on('click', setTextProperty))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_italic').on('click', setTextProperty))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_underline').on('click', setTextProperty))
+			break
+			case 'link':
+				menu.append($(document.createElement('input')).attr('placeholder', 'target url').val($(this).closest('.superblock-element').attr('href')).on('input', setLinkTarget))
+			break
+			case 'code':
+				let tagName = $(this).closest('.superblock-element').find('.subTxt:first').prop('tagName').toLowerCase()
+				menu.append($(document.createElement('select')).attr('placeholder', 'Select Tag')
+					.append($(document.createElement('option')).text('<span>').attr('value', 'span').prop('selected', (tagName === 'span')))
+					.append($(document.createElement('option')).text('<p>').attr('value', 'p').prop('selected', (tagName === 'p')))
+					.append($(document.createElement('option')).text('<h1>').attr('value', 'h1').prop('selected', (tagName === 'h1')))
+					.append($(document.createElement('option')).text('<h2>').attr('value', 'h2').prop('selected', (tagName === 'h2')))
+					.append($(document.createElement('option')).text('<h3>').attr('value', 'h3').prop('selected', (tagName === 'h3')))
+					.append($(document.createElement('option')).text('<h4>').attr('value', 'h4').prop('selected', (tagName === 'h4')))
+					.append($(document.createElement('option')).text('<h5>').attr('value', 'h5').prop('selected', (tagName === 'h5')))
+					.append($(document.createElement('option')).text('<script>').attr('value', 'script').prop('selected', (tagName === 'script')))
+				).on('change', setTextProperty).attr('data-option', 'tag')
+			break
+			case 'add':
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('aspect_ratio').on('click', addSubElement))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_color_text').on('click', addSubElement))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('wallpaper').on('click', addSubElement))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('link').on('click', addSubElement))
+			break
+			case 'Z':
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-270').text('logout').on('click', snap))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('save_alt').on('click', snap))
+			break
+		}
+		$(this).prepend(menu)
+	}
+
+	const addSubMenu = function(e) {
+		e.stopPropagation()
+		if($(this).find('.superblock-submenu').length) {return}
+		let menu = $(document.createElement('div')).addClass('superblock-submenu')
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('add').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('visibility').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('open_with').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('zoom_out_map').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('menu-button').text('Z').css({top:'-2.333rem', fontSize:'1.333rem', padding: '0.25rem 0.6rem'}).on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('delete_outline').on('click', removeSelf))
+
+		$(this).prepend(menu)
+	}
+
+	const addLinkMenu = function(e) {
+		e.stopPropagation()
+		if($(this).find('.superblock-submenu').length) {return}
+		let menu = $(document.createElement('div')).addClass('superblock-submenu')
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('link').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('add').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('visibility').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('open_with').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('zoom_out_map').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('menu-button').text('Z').css({top:'-2.333rem', fontSize:'1.333rem', padding: '0.25rem 0.6rem'}).on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('delete_outline').on('click', removeSelf))
+
+		$(this).prepend(menu)
+	}
+
+	const addImageMenu = function(e) {
+		e.stopPropagation()
+		if($(this).find('.superblock-submenu').length) {return}
+		let menu = $(document.createElement('div')).addClass('superblock-submenu')
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('wallpaper').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_color_text').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('visibility').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('open_with').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('zoom_out_map').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('menu-button').text('Z').css({top:'-2.333rem', fontSize:'1.333rem', padding: '0.25rem 0.6rem'}).on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('delete_outline').on('click', removeSelf))
+
+		$(this).prepend(menu)
+	}
+
+	const addTextMenu = function(e) {
+		e.stopPropagation()
+		if($(this).find('.superblock-submenu').length) {return}
+		let menu = $(document.createElement('div')).addClass('superblock-submenu')
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_color_text').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('code').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('add').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('visibility').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('open_with').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('zoom_out_map').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('menu-button').text('Z').css({top:'-2.333rem', fontSize:'1.333rem', padding: '0.25rem 0.6rem'}).on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('delete_outline').on('click', removeSelf))
+
+		$(this).prepend(menu)
+	}
+
+const handleResize = function() {
+	$('.superblock').css('font-size', $(this).width() / 96 )
+}
+
+$( window ).resize(handleResize)
+
+	const convertPx2Per10 = function(num, div) {
+		return (parseFloat(num) / div) * 100 + '%'
+	}
+
+	const convertPxHeightAspect = function(width, height) {
+		return `${width}/${height}`
+	}
+
+	const endEditing = function() {
+		$('.superblock-menu').remove()
+		$('.superblock-submenu').remove()
+		$(this).find('.superblock-element').each(function() {
+			$(this).css('width', convertPx2Per10($(this).outerWidth(), $(this).parent().closest('.superblock-element, .superblock').outerWidth()) )
+			$(this).css('height', convertPx2Per10($(this).outerHeight(), $(this).parent().closest('.superblock-element, .superblock').outerHeight()) )
+			$(this).css('top', convertPx2Per10($(this).css('top'), $(this).parent().closest('.superblock-element, .superblock').outerHeight()) )
+			$(this).css('left', convertPx2Per10($(this).css('left'), $(this).parent().closest('.superblock-element, .superblock').outerWidth()) )
+		})
+		$(this).css('aspect-ratio', convertPxHeightAspect($(this).width(), $(this).height())).css('height', 'unset')
+	}
+
+	$(document).ready(function() {
+		$('.superblock').css('font-size', $(this).width() / 96 ).on('mouseenter', addSuperMenu).on('mouseleave', endEditing)
+	})
+</script>
+<!-- <script src="https://cdn.ckeditor.com/ckeditor5/35.3.2/classic/ckeditor.js"></script> -->
+
+  <!--   <script>
+        ClassicEditor
+            .create( document.querySelector( '#editor' ) )
+            .catch( error => {
+                console.error( error );
+            } );
+    </script> -->
+</html>
