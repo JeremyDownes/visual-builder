@@ -58,10 +58,10 @@ box-sizing: border-box;
 		resize: vertical;
 	}
 	.admin-edit-mode .superblock:hover .superblock-element:hover {
-		background-color: #c4bfbf54!important;
+		background-color: #c4bfbf54;
 	}
 	.admin-edit-mode .superblock:hover .superblock-element:empty {
-		background-color: #c4bfbf80!important;
+		background-color: #c4bfbf80;
 	}
 	.admin-edit-mode .superblock:hover {
 		background-color: #c4bfbf54;
@@ -122,6 +122,10 @@ box-sizing: border-box;
 		background-color: darkgray;
 		top: -2rem;
 	}
+	.superblock-submenu>.active {
+		background-color: #4f4f4f;
+		color: darkgray;
+	}
 	.superblock-element {
 		position: absolute;
 		min-height: 1em;
@@ -163,6 +167,22 @@ box-sizing: border-box;
 	.underline {
 		text-decoration: underline;
 	}
+
+	@media only screen and (max-width: 767px) {
+		.hidden-mobile {
+			display: none;
+		}
+	}
+	@media only screen and (min-width: 768px) and (max-width: 1025px) {
+		.hidden-tablet {
+			display: none;
+		}
+	}
+	@media only screen and (min-width: 1026px) {
+		.hidden-desktop {
+			display: none;
+		}
+	}
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
@@ -178,8 +198,25 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 )
 }
 
+	const attachEditing = function() {
+		if($(this).hasClass('img')) {
+			$(this).on('mouseenter', addImageMenu).on('mouseleave', removeSubmenu)
+		} else if($(this).hasClass('super-text')) {
+			$(this).on('mouseenter', addTextMenu).on('mouseleave', removeSubmenu)
+		} else if($(this).hasClass('super-link')) {
+			$(this).on('mouseenter', addLinkMenu).on('mouseleave', removeSubmenu)
+		} else {
+			$(this).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu)
+		}
+	}
+
 	const removeSelf = function() {
 		$(this).closest('.superblock-element, .superblock').remove()
+	}
+
+	const duplicateSelf = function() {
+		let dup = $(this).closest('.superblock-element, .superblock').clone()
+		$(this).closest('.superblock-element, .superblock').parent().closest('.superblock-element, .superblock').append(dup)
 	}
 
 	const setImageSrc = function() {
@@ -238,9 +275,42 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 		}
 	}
 
+	const setContainerProperty = function(e) {
+		e.stopPropagation()		
+		switch($(this).text()) {
+			case 'smartphone':
+				$(this).toggleClass('active')
+				$(this).closest('.superblock-element').toggleClass('hidden-mobile')
+			break
+			case 'tablet_mac':
+				$(this).toggleClass('active')
+				$(this).closest('.superblock-element').toggleClass('hidden-tablet')
+			break
+			case 'laptop':
+				$(this).toggleClass('active')
+				$(this).closest('.superblock-element').toggleClass('hidden-desktop')
+			break
+			default:
+				if($(this).attr('type') === 'color') {
+					if($(this).hasClass('border-color')) {
+						$(this).closest('.superblock-element').attr('border-color', $(this).val()).css({'border-color': $(this).val(), 'border-style': 'solid'})
+					} else {
+						$(this).closest('.superblock-element').attr('background-color', $(this).val()).css('background-color', $(this).val())
+					}
+				}
+				if($(this).attr('type') === 'range') {
+					if($(this).hasClass('border-width')) {
+						$(this).closest('.superblock-element').css({'border-width': $(this).val() + 'px', 'border-style': 'solid'})
+					} else {
+						$(this).closest('.superblock-element').css('border-radius', $(this).val() + '%')
+					}
+				}
+			break
+		}
+	}
+
 	const removeSubmenu = function() {
-		let $self = $(this)
-			$self.find('.superblock-submenu').remove()
+		$(this).find('.superblock-submenu').remove()
 	}
 
 	const addElement = function() {
@@ -320,7 +390,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 			  	.append($(document.createElement('img')).attr('src', 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM='))
 			break
 			case 'link': 
-			  element = $(document.createElement('a')).addClass('superblock-element').attr('draggable', true).on('dragstart', move).on('mouseenter', addLinkMenu).on('mouseleave', removeSubmenu).on('click', function(e) {e.stopPropagation(); e.preventDefault()})
+			  element = $(document.createElement('a')).addClass('superblock-element super-link').attr('draggable', true).on('dragstart', move).on('mouseenter', addLinkMenu).on('mouseleave', removeSubmenu).on('click', function(e) {e.stopPropagation(); e.preventDefault()})
 			break
 		}
 		$(this).closest('.superblock-element').append(element)
@@ -528,6 +598,43 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('wallpaper').on('click', addSubElement))
 				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('link').on('click', addSubElement))
 			break
+			case 'visibility':
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('all_out').on('mouseenter', addSubMenuDimension))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_color_fill').on('mouseenter', addSubMenuDimension))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('border_style').on('mouseenter', addSubMenuDimension))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('devices').on('mouseenter', addSubMenuDimension))
+			break
+			case 'all_out': 
+				menu.append($(document.createElement('input')).attr({type: 'range', 'draggable': true, max: 50}).css('top', '-1.5rem').val(parseInt($(this).closest('.superblock-element').css('border-radius')))
+					.on('dragstart', function(e) {e.stopPropagation();e.preventDefault()}).on('input', setContainerProperty))
+			break
+			case  'format_color_fill':
+				let colorVal = $(this).closest('.superblock-element').attr('data-background-color') || 'rgb(0,0,0)'
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').append(
+					$(document.createElement('input')).attr('type', 'color').css({'width': '1em', 'height': '1em', 'position': 'relative', top: '-.25em', padding: 0, margin: 0, border: 'none', 'background-color': 'transparent'}).on('input', setContainerProperty)
+						.val(colorVal))
+				)
+			break
+			case 'border_style':
+				let borderColor = $(this).closest('.superblock-element').css('border-color') || 'rgb(0,0,0)'
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-270').text('line_weight').on('mouseenter', addSubMenuDimension))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').append(
+					$(document.createElement('input')).attr('type', 'color').css({'width': '1em', 'height': '1em', 'position': 'relative', top: '-.25em', padding: 0, margin: 0, border: 'none', 'background-color': 'transparent'})
+						.on('input', setContainerProperty).val(borderColor).addClass('border-color'))
+				)
+			break
+			case 'devices':
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('smartphone').on('click', setContainerProperty)
+					.addClass(($(this).closest('.superblock-element').hasClass('hidden-mobile'))? 'active' : ''))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('tablet_mac').on('click', setContainerProperty)
+					.addClass(($(this).closest('.superblock-element').hasClass('hidden-tablet'))? 'active' : ''))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('laptop').on('click', setContainerProperty)
+					.addClass(($(this).closest('.superblock-element').hasClass('hidden-desktop'))? 'active' : ''))
+			break
+			case 'line_weight':
+				menu.append($(document.createElement('input')).attr({type: 'range', 'draggable': true, max: 50}).css('top', '-1.5rem').val(parseInt($(this).closest('.superblock-element').css('border-width')))
+					.on('dragstart', function(e) {e.stopPropagation();e.preventDefault()}).on('input', setContainerProperty).addClass('border-width'))
+			break
 			case 'Z':
 				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-270').text('logout').on('click', snap))
 				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('save_alt').on('click', snap))
@@ -545,6 +652,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('open_with').on('mouseenter', addSubMenuDimension))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('zoom_out_map').on('mouseenter', addSubMenuDimension))
 		menu.append($(document.createElement('span')).addClass('menu-button').text('Z').css({top:'-2.333rem', fontSize:'1.333rem', padding: '0.25rem 0.6rem'}).on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('content_copy').on('click', duplicateSelf))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('delete_outline').on('click', removeSelf))
 
 		$(this).prepend(menu)
@@ -560,6 +668,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('open_with').on('mouseenter', addSubMenuDimension))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('zoom_out_map').on('mouseenter', addSubMenuDimension))
 		menu.append($(document.createElement('span')).addClass('menu-button').text('Z').css({top:'-2.333rem', fontSize:'1.333rem', padding: '0.25rem 0.6rem'}).on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('content_copy').on('click', duplicateSelf))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('delete_outline').on('click', removeSelf))
 
 		$(this).prepend(menu)
@@ -575,6 +684,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('open_with').on('mouseenter', addSubMenuDimension))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('zoom_out_map').on('mouseenter', addSubMenuDimension))
 		menu.append($(document.createElement('span')).addClass('menu-button').text('Z').css({top:'-2.333rem', fontSize:'1.333rem', padding: '0.25rem 0.6rem'}).on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('content_copy').on('click', duplicateSelf))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('delete_outline').on('click', removeSelf))
 
 		$(this).prepend(menu)
@@ -591,6 +701,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('open_with').on('mouseenter', addSubMenuDimension))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('zoom_out_map').on('mouseenter', addSubMenuDimension))
 		menu.append($(document.createElement('span')).addClass('menu-button').text('Z').css({top:'-2.333rem', fontSize:'1.333rem', padding: '0.25rem 0.6rem'}).on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('content_copy').on('click', duplicateSelf))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('delete_outline').on('click', removeSelf))
 
 		$(this).prepend(menu)
@@ -603,6 +714,7 @@ const handleResize = function() {
 $( window ).resize(handleResize)
 
 	const convertPx2Per10 = function(num, div) {
+		if(typeof(num) === 'string' && num.includes('%')) {return num}
 		return (parseFloat(num) / div) * 100 + '%'
 	}
 
@@ -619,6 +731,7 @@ $( window ).resize(handleResize)
 			$(this).css('top', convertPx2Per10($(this).css('top'), $(this).parent().closest('.superblock-element, .superblock').outerHeight()) )
 			$(this).css('left', convertPx2Per10($(this).css('left'), $(this).parent().closest('.superblock-element, .superblock').outerWidth()) )
 		})
+
 		$(this).css('aspect-ratio', convertPxHeightAspect($(this).width(), $(this).height())).css('height', 'unset')
 	}
 
