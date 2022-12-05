@@ -396,6 +396,66 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 		$(this).closest('.superblock-element').append(element)
 	}
 
+	const align = function(e) {
+		e.stopPropagation()
+		let css = {}
+		switch($(this).text()) {
+			case 'format_align_center':
+				if($(this).hasClass('rot-90')) {
+					$(this).closest('.superblock-element').find('>*:not(.superblock-submenu)').each(function() {
+						$(this).css('top', $(this).parent().height() / 2 - $(this).height() / 2)
+					})
+				} else {
+					$(this).closest('.superblock-element').find('>*:not(.superblock-submenu)').each(function() {
+						$(this).css('left', $(this).parent().width() / 2 - $(this).width() / 2)
+					})
+				}
+			break
+			case 'density_large':
+				if($(this).hasClass('rot-90')) {
+					$(this).closest('.superblock-element').find('>*:not(.superblock-submenu)').each(function() {
+						let blockLeft = parseInt($(this).css('left'))
+						if(Math.abs(($(this).parent().width() / 3) - (blockLeft + $(this).width() / 2)) < Math.abs(($(this).parent().width() / 3) * 2 - (blockLeft + $(this).width() / 2)) ) {
+							$(this).css('left', $(this).parent().width() / 3 - $(this).width() / 2)
+						} else {
+							$(this).css('left', ($(this).parent().width() / 3) * 2 - $(this).width() / 2)
+						}
+					})
+				} else {
+					$(this).closest('.superblock-element').find('>*:not(.superblock-submenu)').each(function() {
+						let blockTop = parseInt($(this).css('top'))
+						if(Math.abs(($(this).parent().height() / 3) - (blockTop + $(this).height() / 2)) < Math.abs(($(this).parent().height() / 3) * 2 - (blockTop + $(this).height() / 2)) ) {
+							$(this).css('top', $(this).parent().height() / 3 - $(this).height() / 2)
+						} else {
+							$(this).css('top', ($(this).parent().height() / 3) * 2 - $(this).height() / 2)
+						}
+					})
+				} 
+			break
+			case 'density_medium':
+				if($(this).hasClass('rot-90')) css = {width: '33.333%'}
+				else css = {height: '33.333%'}	
+			break
+			case 'density_small':
+				if($(this).hasClass('rot-90')) css = {width: '25%'}
+				else css = {height: '25%'}	
+			break
+			case 'format_align_justify':
+				if($(this).hasClass('rot-90')) { 
+
+				}
+				else css = {height: '20%'}	
+			break
+			default:
+				if($(this).text().includes('height')) {
+					if($(this).hasClass('rot-90')) css = {width: '100%', left: 0}
+					else css = {height: '100%', top: 0}	
+				}
+			break
+		}
+		$(this).closest('.superblock-element').css(css)
+	}
+
 	const size = function(e) {
 		e.stopPropagation()
 		let css = {}
@@ -617,7 +677,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 			break
 			case 'border_style':
 				let borderColor = $(this).closest('.superblock-element').css('border-color') || 'rgb(0,0,0)'
-				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-270').text('line_weight').on('mouseenter', addSubMenuDimension))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('line_weight').on('mouseenter', addSubMenuDimension))
 				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').append(
 					$(document.createElement('input')).attr('type', 'color').css({'width': '1em', 'height': '1em', 'position': 'relative', top: '-.25em', padding: 0, margin: 0, border: 'none', 'background-color': 'transparent'})
 						.on('input', setContainerProperty).val(borderColor).addClass('border-color'))
@@ -635,6 +695,26 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 				menu.append($(document.createElement('input')).attr({type: 'range', 'draggable': true, max: 50}).css('top', '-1.5rem').val(parseInt($(this).closest('.superblock-element').css('border-width')))
 					.on('dragstart', function(e) {e.stopPropagation();e.preventDefault()}).on('input', setContainerProperty).addClass('border-width'))
 			break
+			case 'grid_on':
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('vertical_distribute').on('mouseenter', addSubMenuDimension))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('horizontal_distribute').on('mouseenter', addSubMenuDimension))
+			break
+			case 'vertical_distribute':
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_align_center').on('click', align))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('density_large').on('click', align))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('density_medium').on('click', align))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('density_small').on('click', align))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('format_align_justify').on('click', align))
+					menu.addClass('rot-270')
+			break
+			case 'horizontal_distribute':
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('format_align_center').on('click', align))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('density_large').on('click', align))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('density_medium').on('click', align))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('density_small').on('click', align))
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_align_justify').on('click', align))
+					menu.addClass('rot-270')
+			break
 			case 'Z':
 				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-270').text('logout').on('click', snap))
 				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('save_alt').on('click', snap))
@@ -651,6 +731,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('visibility').on('mouseenter', addSubMenuDimension))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('open_with').on('mouseenter', addSubMenuDimension))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('zoom_out_map').on('mouseenter', addSubMenuDimension))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('grid_on').on('mouseenter', addSubMenuDimension))
 		menu.append($(document.createElement('span')).addClass('menu-button').text('Z').css({top:'-2.333rem', fontSize:'1.333rem', padding: '0.25rem 0.6rem'}).on('mouseenter', addSubMenuDimension))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('content_copy').on('click', duplicateSelf))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('delete_outline').on('click', removeSelf))
