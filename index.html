@@ -168,6 +168,17 @@ box-sizing: border-box;
 		text-decoration: underline;
 	}
 
+	.locked:after {
+		content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAADXElEQVRYw+2XTUjbYBjHn3yZmMSilWl7CN2kOj8HnR0eClsH62lsvewi68ExVhgMBMGTlx3Fw8Yq7KAwGHSHrZ4UWsTDBA8ThkxUmMJW52fJ2KKt5qO1ybtLe3GmtrUeBN9LEvLP8/ze9/k/yRuAy3GRx+LiIo4Qws4So+SHfT7fVUmSBnRdvy/LMm8YBrJYLCJN05GamprRmZmZ5LkBeL3e/kQiMZzNZhkAABzHASEECCEAAKAoarepqelZNBqNVhzA6/U+39nZeYsQAo7j5m022xuSJL+pqooDgE8UxQFN0xw0TWccDsedWCw2X7Fa+/1+oaOjQ3U6ncjj8YSDwSB5XBMIBOpdLtdXp9OJuru7VwcHB6uKiY0XIxJFsU/TNIZl2R/t7e19Y2Nj2eOacDj81263P6IoKr2/v399YWHhdsUAEEJ3AQBYlv04Pj6eNdNFo9ENjuPmMAwDXdfvVQxAkiQqd4yfpk0mkz8RQrC7u0tWDKCktsJK6+xiAVIAsAcA6SLKpeS0ypnbMBgMXkmn050YhqHczLB8zxeYKcqBAEII03X9Szgc1szEBeu0trb2eWtrq6OUJc0D5s/b2treAcDTsgBUVW3AcbyoZGYeODg4aCiUoyDA4eHhf0lKNVkqlSrfhEdHR6c6/jQgTdPKBzAMwzS6xWJZam5uDrhcroGqqqrfZiCnTcIUYHR01MrzPH9SYJIkdY/H44/FYh8ikchrt9s9YBZHEARbWQDr6+sWAGBMlj5L0/Sf/LUsy9tmcSiKcpRlwo2NDchkMic6PZPJ0Kurq2MjIyOBvb292tnZ2Vcn6YoxoSlAIpEwrV/uY/NAEASS5/lmURRv5jcnJ3VSWSVwu90pmqY1M3PF4/F4b29vZmpqaokgCNMEPM8nywIIhUISy7KTZktL0/QNv98fJghi0jAM0wQcx0XKfhExDPPCarXekiTp2vF7sizDysrK40LvArvdPmez2V4WykEUurm5uam0tra+JwhCSKfTnQghLJ+sUGKSJFWr1Trc2Nj4ZGJiIluRTWlPT08nQmhQUZSHqqrW5iHyu2KCIIBhmF/V1dWf6urqQtPT0zvn8l/Q39/PbG9vty4vLwv19fUMQRC4oihKS0vL966urvjQ0JBx+ct2ocY/DoltwppkcBYAAAAASUVORK5CYII=);
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		width: 2rem;
+		opacity: 0.5;
+	}
+
+
+
 	@media only screen and (max-width: 767px) {
 		.hidden-mobile {
 			display: none;
@@ -328,7 +339,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 
 		switch($(this).text()) {
 			case 'aspect_ratio': 
-				element = $(document.createElement('div')).addClass('superblock-element').css({height: height, width: width}).attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu)
+				element = $(document.createElement('div')).addClass('superblock-element').css({height: height, width: width}).attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs)
 			break
 			case 'splitscreen':
 				height = $(this).hasClass('rot-90')? '100%' : '50%'
@@ -336,8 +347,8 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 				left = $(this).hasClass('rot-90')? '50%' : 0
 				top = $(this).hasClass('rot-90')? 0 : '50%'
 				element = [
-					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: 0, top: 0}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu),
-					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: left, top: top}).attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu)
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: 0, top: 0}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs),
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: left, top: top}).attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs)
 				]
 			break
 
@@ -349,9 +360,9 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 				left = $(this).hasClass('rot-90')? 0 :'66.66%'
 				top = $(this).hasClass('rot-90')? '66.66%' : 0
 				element = [
-					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: 0, top: 0}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu),
-					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: midx, top: midy}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu),
-					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: left, top: top}).attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu)
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: 0, top: 0}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs),
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: midx, top: midy}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs),
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: left, top: top}).attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs)
 				]
 			break
 			case 'calendar_view_week':
@@ -364,10 +375,10 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 				left = $(this).hasClass('rot-90')? 0 :'75%'
 				top = $(this).hasClass('rot-90')? '75%' : 0
 				element = [
-					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: 0, top: 0}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu),
-					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: x25, top: y25}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu),
-					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: x75, top: y75}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu),
-					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: left, top: top}).attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu)
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: 0, top: 0}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs),
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: x25, top: y25}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs),
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: x75, top: y75}) .attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs),
+					$(document.createElement('div')).addClass('superblock-element').css({height: height, width: width, left: left, top: top}).attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs)
 				]
 			break
 		}
@@ -378,7 +389,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 		let element = null
 		switch($(this).text()) {
 			case 'aspect_ratio': 
-			  element = $(document.createElement('div')).addClass('superblock-element').attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu)
+			  element = $(document.createElement('div')).addClass('superblock-element').attr('draggable', true).on('dragstart', move).on('mouseenter', addSubMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs)
 			break
 			case 'format_color_text': 
 			  element = $(document.createElement('span')).css('width', '7em').addClass('superblock-element super-text').attr('draggable', true).on('dragstart', move)
@@ -386,11 +397,15 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 			  	.append($(document.createElement('span')).addClass('subTxt').attr('contenteditable', true).text('Lorem Ipsum'))
 			break
 			case 'wallpaper': 
-			  element = $(document.createElement('div')).addClass('superblock-element img').attr('draggable', true).attr('alt', '').on('dragstart', move).on('mouseenter', addImageMenu).on('mouseleave', removeSubmenu)
+			  element = $(document.createElement('div')).addClass('superblock-element img').attr('draggable', true).attr('alt', '').on('dragstart', move).on('mouseenter', addImageMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs)
 			  	.append($(document.createElement('img')).attr('src', 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM='))
 			break
 			case 'link': 
-			  element = $(document.createElement('a')).addClass('superblock-element super-link').attr('draggable', true).on('dragstart', move).on('mouseenter', addLinkMenu).on('mouseleave', removeSubmenu).on('click', function(e) {e.stopPropagation(); e.preventDefault()})
+			  element = $(document.createElement('a')).addClass('superblock-element super-link').attr('draggable', true).on('dragstart', move).on('mouseenter', addLinkMenu).on('mouseleave', removeSubmenu).on('click', function(e) {
+			  	e.stopPropagation()
+			  	e.preventDefault()
+			  	$(this).toggleClass('locked')
+			  })
 			break
 		}
 		$(this).closest('.superblock-element').append(element)
@@ -398,7 +413,8 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 
 	const align = function(e) {
 		e.stopPropagation()
-		let css = {}
+		let blockTop = 0
+		let blockLeft = 0
 		switch($(this).text()) {
 			case 'format_align_center':
 				if($(this).hasClass('rot-90')) {
@@ -414,7 +430,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 			case 'density_large':
 				if($(this).hasClass('rot-90')) {
 					$(this).closest('.superblock-element').find('>*:not(.superblock-submenu)').each(function() {
-						let blockLeft = parseInt($(this).css('left'))
+						blockLeft = parseInt($(this).css('left'))
 						if(Math.abs(($(this).parent().width() / 3) - (blockLeft + $(this).width() / 2)) < Math.abs(($(this).parent().width() / 3) * 2 - (blockLeft + $(this).width() / 2)) ) {
 							$(this).css('left', $(this).parent().width() / 3 - $(this).width() / 2)
 						} else {
@@ -423,7 +439,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 					})
 				} else {
 					$(this).closest('.superblock-element').find('>*:not(.superblock-submenu)').each(function() {
-						let blockTop = parseInt($(this).css('top'))
+						blockTop = parseInt($(this).css('top'))
 						if(Math.abs(($(this).parent().height() / 3) - (blockTop + $(this).height() / 2)) < Math.abs(($(this).parent().height() / 3) * 2 - (blockTop + $(this).height() / 2)) ) {
 							$(this).css('top', $(this).parent().height() / 3 - $(this).height() / 2)
 						} else {
@@ -433,27 +449,97 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 				} 
 			break
 			case 'density_medium':
-				if($(this).hasClass('rot-90')) css = {width: '33.333%'}
-				else css = {height: '33.333%'}	
+				if($(this).hasClass('rot-90')) {
+					$(this).closest('.superblock-element').find('>*:not(.superblock-submenu)').each(function() {
+						blockLeft = parseInt($(this).css('left'))
+						if(Math.abs(($(this).parent().width() / 4) - (blockLeft + $(this).width() / 2)) < Math.abs(($(this).parent().width() / 4) * 2 - (blockLeft + $(this).width() / 2)) ) {
+							$(this).css('left', $(this).parent().width() / 4 - $(this).width() / 2)
+						} else if(Math.abs(($(this).parent().width() / 4) * 2 - (blockLeft + $(this).width() / 2)) < Math.abs(($(this).parent().width() / 4) * 3 - (blockLeft + $(this).width() / 2)) ) {
+							$(this).css('left', (($(this).parent().width() / 4) * 2 - ($(this).width() / 2)))
+						} else  {
+							$(this).css('left', (($(this).parent().width() / 4) * 3 - ($(this).width() / 2)))
+						}
+					})
+				} else {
+					$(this).closest('.superblock-element').find('>*:not(.superblock-submenu)').each(function() {
+						blockTop = parseInt($(this).css('top'))
+						if(Math.abs(($(this).parent().height() / 4) - (blockTop + $(this).height() / 2)) < Math.abs(($(this).parent().height() / 4) * 2 - (blockTop + $(this).height() / 2)) ) {
+							$(this).css('top', $(this).parent().height() / 4 - $(this).height() / 2)
+						} else if(Math.abs(($(this).parent().height() / 4) * 2 - (blockTop + $(this).height() / 2)) < Math.abs(($(this).parent().height() / 4) * 3 - (blockTop + $(this).height() / 2)) ) {
+							$(this).css('top', (($(this).parent().height() / 4) * 2 - ($(this).height() / 2)))
+						} else  {
+							$(this).css('top', (($(this).parent().height() / 4) * 3 - ($(this).height() / 2)))
+						}
+					})
+				}
 			break
 			case 'density_small':
-				if($(this).hasClass('rot-90')) css = {width: '25%'}
-				else css = {height: '25%'}	
+				if($(this).hasClass('rot-90')) {
+					$(this).closest('.superblock-element').find('>*:not(.superblock-submenu)').each(function() {
+						blockLeft = parseInt($(this).css('left'))
+						if(Math.abs(($(this).parent().width() / 5) - (blockLeft + $(this).width() / 2)) < Math.abs(($(this).parent().width() / 5) * 2 - (blockLeft + $(this).width() / 2)) ) {
+							$(this).css('left', $(this).parent().width() / 5 - $(this).width() / 2)
+						} else if(Math.abs(($(this).parent().width() / 5) * 2 - (blockLeft + $(this).width() / 2)) < Math.abs(($(this).parent().width() / 5) * 3 - (blockLeft + $(this).width() / 2)) ) {
+							$(this).css('left', (($(this).parent().width() / 5) * 2 - ($(this).width() / 2)))
+						} else if(Math.abs(($(this).parent().width() / 5) * 3 - (blockLeft + $(this).width() / 2)) < Math.abs(($(this).parent().width() / 5) * 4 - (blockLeft + $(this).width() / 2)) ) {
+							$(this).css('left', (($(this).parent().width() / 5) * 3 - ($(this).width() / 2)))
+						} else  {
+							$(this).css('left', (($(this).parent().width() / 5) * 4 - ($(this).width() / 2)))
+						}
+					})
+				} else {
+					$(this).closest('.superblock-element').find('>*:not(.superblock-submenu)').each(function() {
+						blockTop = parseInt($(this).css('top'))
+						if(Math.abs(($(this).parent().height() / 5) - (blockTop + $(this).height() / 2)) < Math.abs(($(this).parent().height() / 5) * 2 - (blockTop + $(this).height() / 2)) ) {
+							$(this).css('top', $(this).parent().height() / 5 - $(this).height() / 2)
+						} else if(Math.abs(($(this).parent().height() / 5) * 2 - (blockTop + $(this).height() / 2)) < Math.abs(($(this).parent().height() / 5) * 3 - (blockTop + $(this).height() / 2)) ) {
+							$(this).css('top', (($(this).parent().height() / 5) * 2 - ($(this).height() / 2)))
+						} else if(Math.abs(($(this).parent().height() / 5) * 3 -(blockTop + $(this).height() / 2)) < Math.abs(($(this).parent().height() / 5) * 4 - (blockTop + $(this).height() / 2)) ) {
+							$(this).css('top', (($(this).parent().height() / 5) * 3 - ($(this).height() / 2)))
+						} else  {
+							$(this).css('top', (($(this).parent().height() / 5) * 4 - ($(this).height() / 2)))
+						}
+					})
+				}
 			break
 			case 'format_align_justify':
-				if($(this).hasClass('rot-90')) { 
-
+				if($(this).hasClass('rot-90')) {
+					$(this).closest('.superblock-element').find('>*:not(.superblock-submenu)').each(function() {
+						blockLeft = parseInt($(this).css('left'))
+						if(Math.abs(($(this).parent().width() / 6) - (blockLeft + $(this).width() / 2)) < Math.abs(($(this).parent().width() / 6) * 2 - (blockLeft + $(this).width() / 2)) ) {
+							$(this).css('left', $(this).parent().width() / 6 - $(this).width() / 2)
+						} else if(Math.abs(($(this).parent().width() / 6) * 2 - (blockLeft + $(this).width() / 2)) < Math.abs(($(this).parent().width() / 6) * 3 - (blockLeft + $(this).width() / 2)) ) {
+							$(this).css('left', (($(this).parent().width() / 6) * 2 - ($(this).width() / 2)))
+						} else if(Math.abs(($(this).parent().width() / 6) * 3 - (blockLeft + $(this).width() / 2)) < Math.abs(($(this).parent().width() / 6) * 4 - (blockLeft + $(this).width() / 2)) ) {
+							$(this).css('left', (($(this).parent().width() / 6) * 3 - ($(this).width() / 2)))
+						} else if(Math.abs(($(this).parent().width() / 6) * 4 - (blockLeft + $(this).width() / 2)) < Math.abs(($(this).parent().width() / 6) * 5 - (blockLeft + $(this).width() / 2)) ) {
+							$(this).css('left', (($(this).parent().width() / 6) * 4 - ($(this).width() / 2)))
+						} else  {
+							$(this).css('left', (($(this).parent().width() / 6) * 5 - ($(this).width() / 2)))
+						}
+					})
+				} else {
+					$(this).closest('.superblock-element').find('>*:not(.superblock-submenu)').each(function() {
+						blockTop = parseInt($(this).css('top'))
+						if(Math.abs(($(this).parent().height() / 6) - (blockTop + $(this).height() / 2)) < Math.abs(($(this).parent().height() / 6) * 2 - (blockTop + $(this).height() / 2)) ) {
+							$(this).css('top', $(this).parent().height() / 6 - $(this).height() / 2)
+						} else if(Math.abs(($(this).parent().height() / 6) * 2 - (blockTop + $(this).height() / 2)) < Math.abs(($(this).parent().height() / 6) * 3 - (blockTop + $(this).height() / 2)) ) {
+							$(this).css('top', (($(this).parent().height() / 6) * 2 - ($(this).height() / 2)))
+						} else if(Math.abs(($(this).parent().height() / 6) * 3 -(blockTop + $(this).height() / 2)) < Math.abs(($(this).parent().height() / 6) * 4 - (blockTop + $(this).height() / 2)) ) {
+							$(this).css('top', (($(this).parent().height() / 6) * 3 - ($(this).height() / 2)))
+						} else if(Math.abs(($(this).parent().height() / 6) * 4 -(blockTop + $(this).height() / 2)) < Math.abs(($(this).parent().height() / 6) * 5 - (blockTop + $(this).height() / 2)) ) {
+							$(this).css('top', (($(this).parent().height() / 6) * 4 - ($(this).height() / 2)))
+						} else  {
+							$(this).css('top', (($(this).parent().height() / 6) * 5 - ($(this).height() / 2)))
+						}
+					})
 				}
-				else css = {height: '20%'}	
 			break
 			default:
 				if($(this).text().includes('height')) {
-					if($(this).hasClass('rot-90')) css = {width: '100%', left: 0}
-					else css = {height: '100%', top: 0}	
 				}
 			break
 		}
-		$(this).closest('.superblock-element').css(css)
 	}
 
 	const size = function(e) {
@@ -524,6 +610,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 
 	const move = function(e) {
 		e.stopPropagation()
+		if($(this).hasClass('locked')) { return }
 		let x = e.clientX
 		let y = e.clientY
 		let left = parseInt($(this).css('left'))
@@ -533,6 +620,18 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 			$(this).css('left', left + e.clientX - x)
 			$(this).css('top', top + e.clientY - y)
 		}).on('dragend', function() { $(this).off('drag')})
+	}
+
+	const setAttrs = function(e) {
+		$(this).attr('data-height', $(this).height())
+		$(this).attr('data-width', $(this).width())
+	}
+
+	const lock = function(e) {
+		e.stopPropagation()
+		if($(this).width() === parseInt($(this).attr('data-width')) && $(this).height() === parseInt($(this).attr('data-height'))) {
+			$(this).toggleClass('locked')
+		}
 	}
 
 	const addSuperMenu = function() {
@@ -812,7 +911,7 @@ $( window ).resize(handleResize)
 			$(this).css('top', convertPx2Per10($(this).css('top'), $(this).parent().closest('.superblock-element, .superblock').outerHeight()) )
 			$(this).css('left', convertPx2Per10($(this).css('left'), $(this).parent().closest('.superblock-element, .superblock').outerWidth()) )
 		})
-
+		$('.superblock .locked').removeClass('locked')
 		$(this).css('aspect-ratio', convertPxHeightAspect($(this).width(), $(this).height())).css('height', 'unset')
 	}
 
