@@ -695,7 +695,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 				tip = 'position'
 			break
 			case 'zoom_out_map':
-				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('fullscreen').on('click', size))
+				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('fullscreen').on('click', size).on('mouseenter', function() {addTip(block, 'fill container')}))
 				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-90').text('height').on('mouseenter', addSubMenuDimension).on('click', stopPropagation).on('click', size).on('mouseenter', function() {addTip(block, 'full width')}))
 				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('height').on('mouseenter', addSubMenuDimension).on('click', stopPropagation).on('click', size).on('mouseenter', function() {addTip(block, 'full height')}))
 				tip = 'size'
