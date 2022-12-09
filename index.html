@@ -328,6 +328,7 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 				}
 				if($(this).attr('data-option') === 'tag') {
 					let newEl = $(document.createElement($(this).find(':selected').val()))
+						.attr('contenteditable', true)
 						.addClass($(this).closest('.superblock-element').find('.subTxt:first').attr('class'))
 						.attr('style', $(this).closest('.superblock-element').find('.subTxt:first').attr('style'))
 						.html($(this).closest('.superblock-element').find('.subTxt:first').html())
