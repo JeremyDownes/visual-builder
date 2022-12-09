@@ -285,6 +285,9 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 	const setFormAction = function() {
 		$(this).closest('.superblock-element').find('form').attr('action', $(this).val())
 	}
+	const setFormOnsubmit = function() {
+		$(this).closest('.superblock-element').find('form').attr('onsubmit', $(this).val())
+	}
 	const setInputAttrs = function() {
 		$(this).attr('for', $(this).text()).next('input').attr('name', $(this).text())
 	}
@@ -920,6 +923,10 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 			case 'open_in_new':
 				menu.append($(document.createElement('input')).attr('placeholder', 'form action (url)').val($(this).closest('.superblock-element').find('form').attr('action')).on('input', setFormAction).on('click', stopPropagation))
 				tip = 'form action'
+			break
+			case 'ads_click':
+				menu.append($(document.createElement('input')).attr('placeholder', 'form submission (function)').val($(this).closest('.superblock-element').find('form').attr('onsubmit')).on('input', setFormOnsubmit).on('click', stopPropagation))
+				tip = 'form on submit function'
 			break
 			case 'Z':
 				menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button rot-270').text('logout').on('click', snap).on('mouseenter', function() {addTip(block, 'move forward')}))
