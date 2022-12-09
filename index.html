@@ -42,7 +42,7 @@ box-sizing: border-box;
 		left: 0;
 		top: 0;
 		z-index: 0;
-		min-height: 1rem;
+		height: 1rem;
 		width: 100%;
 		opacity: 0;
 		overflow: visible;
@@ -50,6 +50,10 @@ box-sizing: border-box;
 		transition: opacity .5s;
 		cursor: pointer;
 	}
+	.admin-edit-mode .superblock-element > .superblock-submenu {
+		height: .3rem;
+	}
+
 	.admin-edit-mode .superblock-menu .dimension {
 		top: 2rem;
 		width: unset;
@@ -171,12 +175,15 @@ box-sizing: border-box;
 	.superblock-element>form {
 		height: 100%;
 	}
-	.superblock-element>form>input[type=submit] {
+	.superblock-element>form .submit-container {
 		position: absolute;
 		bottom: 0;
 	}
 	.super-form {
 		width: 5rem;
+	}
+	.super-form label {
+		display: block;
 	}
 
 /* helper stuff	*/
@@ -274,6 +281,9 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 	}
 	const setFormAction = function() {
 		$(this).closest('.superblock-element').find('form').attr('action', $(this).val())
+	}
+	const setInputAttrs = function() {
+		$(this).attr('for', $(this).text()).next('input').attr('name', $(this).text())
 	}
 
 	const setTextProperty = function() {
@@ -450,8 +460,17 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 			break
 			case 'list_alt': 
 			  element = $(document.createElement('div')).addClass('superblock-element super-form').attr('draggable', true).on('dragstart', move).on('mouseenter', addFormMenu).on('mouseleave', removeSubmenu).on('click', lock).on('mousedown', setAttrs)
-			  	.append($(document.createElement('form')).attr('action', 'javascript:alert("Please provide a form submission action")').append($(document.createElement('input')).attr('type', 'submit').text('submit').on('click', stopPropagation)))
+			  	.append($(document.createElement('form')).attr('action', 'javascript:alert("Please provide a form submission action")')
+			  		.append($(document.createElement('div')).addClass('submit-container').append($(document.createElement('input')).attr({'type': 'submit', contenteditable: true}).text('submit').on('click', stopPropagation))
+		  			)
+		  		)
 			break
+			case 'text_fields':
+				$(this).closest('.superblock-element').find('.submit-container').before([
+						$(document.createElement('label')).attr({'for': 'label', contenteditable: true}).text('label').on('click', stopPropagation).on('input', setInputAttrs),
+						$(document.createElement('input')).attr({'type': 'text', name: 'label'})
+					]
+				)
 		}
 		$(this).closest('.superblock-element').append(element)
 	}
@@ -817,11 +836,10 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 			break
 			case 'add':
 				if($(this).closest('.superblock-element').hasClass('super-form')) {
-
+					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('text_fields').on('click', addSubElement).on('mouseenter', function() {addTip(block, 'add input')}))
 					tip = 'add field'
 
 				} else {
-
 					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('aspect_ratio').on('click', addSubElement).on('mouseenter', function() {addTip(block, 'add block')}))
 					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('format_color_text').on('click', addSubElement).on('mouseenter', function() {addTip(block, 'add text')}))
 					menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('wallpaper').on('click', addSubElement).on('mouseenter', function() {addTip(block, 'add image')}))
