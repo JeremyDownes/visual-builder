@@ -42,7 +42,7 @@ box-sizing: border-box;
 		left: 0;
 		top: 0;
 		z-index: 0;
-		height: 1rem;
+		min-height: 1rem;
 		width: 100%;
 		opacity: 0;
 		overflow: visible;
@@ -52,6 +52,9 @@ box-sizing: border-box;
 	}
 	.admin-edit-mode .superblock-element > .superblock-submenu {
 		height: .3rem;
+	}
+	.admin-edit-mode .superblock-element > .superblock-submenu:has(.superblock-submenu) {
+		height: unset;
 	}
 
 	.admin-edit-mode .superblock-menu .dimension {
@@ -1008,8 +1011,10 @@ $(el).text( ($('body').hasClass('admin-edit-mode')) ?
 		if($(this).find('.superblock-submenu').length) {return}
 		let menu = $(document.createElement('div')).addClass('superblock-submenu')
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('open_in_new').on('mouseenter', addSubMenuDimension).on('click', stopPropagation))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('ads_click').on('mouseenter', addSubMenuDimension).on('click', stopPropagation))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('add').on('mouseenter', addSubMenuDimension).on('click', stopPropagation))
 		//menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('visibility').on('mouseenter', addSubMenuDimension).on('click', stopPropagation))
+		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('open_with').on('mouseenter', addSubMenuDimension).on('click', stopPropagation))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('zoom_out_map').on('mouseenter', addSubMenuDimension).on('click', stopPropagation))
 		menu.append($(document.createElement('span')).addClass('menu-button').text('Z').css({top:'-2.333rem', fontSize:'1.333rem', padding: '0.25rem 0.6rem'}).on('mouseenter', addSubMenuDimension).on('click', stopPropagation))
 		menu.append($(document.createElement('span')).addClass('material-icons-outlined menu-button').text('content_copy').on('click', duplicateSelf).on('mouseenter', function() { $(this).closest('.superblock-element').append(setTip('clone'))}))
